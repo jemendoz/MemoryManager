@@ -1,5 +1,5 @@
 # MemoryManager
-Un gestor de memoria en un esquema paginado sencillo. Parametros de la memoria y proceso personalizables, e impresion de resultados.
+Un gestor de memoria en un esquema paginado sencillo. Parámetros de la memoria y proceso personalizables, e impresión de resultados.
 
 ## Instalacion
 Se requiere **Python 3** para usar el programa.  
@@ -24,4 +24,4 @@ python main.py
 ```
 
 ## Licencia
-Este repositorio tiene licencia *MIT license*, para mas informacion, ver `LICENSE`
+Este repositorio tiene licencia *MIT license*, para mas información, ver `LICENSE`
