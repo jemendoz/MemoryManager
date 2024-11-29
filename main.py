@@ -2,8 +2,8 @@ from classfile import *
 from datetime import datetime as dt
 import os
 
-VERSION = "0.3.0"
-AUTHOR = "Jesus Mendoza"
+VERSION = "0.3.1"
+AUTHOR = "Jesús Mendoza"
 
 ALG_LIST = {
     "1":["belady","fifo","lru"],
@@ -25,7 +25,7 @@ def clear() -> None:
 
 
 def save_to_file(data:str,name:str) -> None:
-    with open(f"{name}-{dt.now().strftime('%y-%m-%d_%H:%M:%S')}.txt","w") as file:
+    with open(f"{name}-{dt.now().strftime('%y-%m-%d_%H-%M-%S')}.txt","w") as file:
         file.write(data)
 
 
@@ -58,7 +58,7 @@ def main() -> None:
         fail = False
         clear()
         print(f"Memory Manager v{VERSION}, by {AUTHOR}\n")
-        print("Selecciona una opcion:")
+        print("Selecciona una opción:")
         print("1. Calcular todos los algoritmos")
         print("2. Calcular algoritmo de Belady")
         print("3. Calcular algoritmo de FIFO")
@@ -66,7 +66,7 @@ def main() -> None:
         print("5. Establecer valores del sistema")
         print("0. Salir")
 
-        opc = input(" Opcion: ")
+        opc = input(" Opción: ")
         if opc == "0":
             break
         elif opc == "5":
@@ -82,21 +82,21 @@ def main() -> None:
             if fail:
                 continue
 
-            print("Tamano de la memoria RAM en bytes: (ej 128)")
+            print("Tamaño de la memoria RAM en bytes: (ej 128)")
             inp = input("RAM: ")
             if not inp.isnumeric():
                 error("valor no valido")
                 continue
             ram_size = int(inp)
 
-            print("Tamano del proceso en bytes: (ej 256)")
+            print("Tamaño del proceso en bytes: (ej 256)")
             inp = input("Proceso: ")
             if not inp.isnumeric():
                 error("valor no valido")
                 continue
             process_size = int(inp)
 
-            print("Tamano de los marcos en bytes: (ej 32)")
+            print("Tamaño de los marcos en bytes: (ej 32)")
             inp = input("Marco: ")
             if not inp.isnumeric():
                 error("valor no valido")
@@ -127,7 +127,7 @@ def main() -> None:
                 try:
                     calc_alg(alg,[mem_access, ram_size, process_size, frame_size, frame_state])
                 except ValueError:
-                    error("seleccion de algoritmo no valido")
+                    error("selección de algoritmo no válido")
             print("[+] HECHO!")
             input("Pulsa [Intro] para continuar...")
 
