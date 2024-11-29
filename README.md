@@ -7,6 +7,11 @@ Usa el siguiente comando para clonar el repositorio.
 ```bash
 git clone https://github.com/jemendoz/MemoryManager.git
 ```
+Una vez en la carpeta del proyecto, necesitas instalar las dependencias
+usando el siguiente comando
+```bash
+pip install -r requirements.txt
+```
 
 ## Uso
 En la carpeta `MemoryManager`, usa el siguiente comando para iniciar el cliente
