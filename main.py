@@ -2,7 +2,7 @@ from classfile import *
 from datetime import datetime as dt
 import os
 
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 AUTHOR = "Jesús Mendoza"
 
 ALG_LIST = {
@@ -25,7 +25,7 @@ def clear() -> None:
 
 
 def save_to_file(data:str,name:str) -> None:
-    with open(f"{name}-{dt.now().strftime('%y-%m-%d_%H-%M-%S')}.txt","w") as file:
+    with open(f"{name}-{dt.now().strftime('%y-%m-%d_%H-%M-%S')}.txt","w",encoding="utf8") as file:
         file.write(data)
 
 
@@ -113,6 +113,7 @@ def main() -> None:
                     error("valor no valido")
                     fail = True
                     break
+            frame_state = [int(x) for x in frame_state]
             if fail:
                 continue
 

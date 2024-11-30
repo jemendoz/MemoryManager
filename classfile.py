@@ -64,7 +64,7 @@ class MemoryManager:
                        s[2] if s[2]!=-1 else "-", # Entra
                        s[3] if s[3]!=-1 else "-", # Sale
                        " | ".join([str(x) for x in s[1]]), # Frames, o marcos de pagina
-                       " | ".join(["0, - " if not i in s[1] else "1, " + str(s[1].index(i)) for i in range(self.page_num)]), # Tabla de pagina
+                       " | ".join(["0, -" if not i in s[1] else "1, " + str(s[1].index(i)) for i in range(self.page_num)]), # Tabla de pagina
                        s[1].index(self.vmem_locations[s[0]][0]), # Marco al que pertenece
                        bin(s[1].index(self.vmem_locations[s[0]][0])*self.frame_size + self.vmem_locations[s[0]][1]), # Dir fisica bin
                        hex(s[1].index(self.vmem_locations[s[0]][0])*self.frame_size + self.vmem_locations[s[0]][1]) # Dir fisica hex
