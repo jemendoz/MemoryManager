@@ -2,7 +2,7 @@ from classfile import *
 from datetime import datetime as dt
 import os
 
-VERSION = "1.0.0"
+VERSION = "1.0.4"
 AUTHOR = "Jesús Mendoza"
 
 ALG_LIST = {
@@ -13,22 +13,24 @@ ALG_LIST = {
     "6":["clock"]
 }
 
+# Lanza un error, pero bonito y controlado :P
 def error(msg:str):
     print(f"[!] ERROR: {msg}")
     input("Pulsa [Intro] para continuar...")
 
+# Limpia la pantalla mediante comando de shell
 def clear() -> None:
     if os.name == "nt":
         os.system("cls")
     elif os.name == "posix":
         os.system("clear")
 
-
+# Guarda data en un archivo determinado por el nombre (usamos el algoritmo) y formato con fecha
 def save_to_file(data:str,name:str) -> None:
     with open(f"{name}-{dt.now().strftime('%y-%m-%d_%H-%M-%S')}.txt","w",encoding="utf8") as file:
         file.write(data)
 
-
+# Calculamos y guardamos un algoritmo
 def calc_alg(alg:str,data:list) -> None:
     mem_access, ram_size, process_size, frame_size, frame_state = data
     mem_access_safe = copy(mem_access) # Versiones seguras de usar, que no cambian los valores del usuario
@@ -48,7 +50,7 @@ def calc_alg(alg:str,data:list) -> None:
 
     save_to_file(result,alg)
 
-
+# Funcion main
 def main() -> None:
     fail = False
     setup = False
@@ -125,11 +127,13 @@ def main() -> None:
 
             setup = True
         elif opc in ["2", "3", "4", "5", "6"]:
-            if not setup:
+            if not setup: # Si no se han iniciado los valores del usuario
                 error("inicia los valores del sistema antes")
                 continue
 
-            algs = ALG_LIST[opc]
+            algs = ALG_LIST[opc] # Seleccionar que algoritmos calcular
+            # se que usar esto de ALG_LIST no es lo mas intuitivo, pero
+            # es facilmente extensible si se annaden mas
             for alg in algs:
                 try:
                     calc_alg(alg,[mem_access, ram_size, process_size, frame_size, frame_state])
@@ -138,6 +142,6 @@ def main() -> None:
             print("[+] HECHO!")
             input("Pulsa [Intro] para continuar...")
 
-
+# Ejecuta main
 if __name__ == "__main__":
     main()

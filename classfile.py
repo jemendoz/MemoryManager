@@ -38,6 +38,10 @@ class MemoryManager:
         return oldpage
 
     def frame_evolution(self):
+        """
+        Crea una lista con los datos paso a paso de la evolucion frente al tiempo
+        del estado de los marcos, entradas y salidas de pagina, etc...
+        """
         history = []
         for i,mem in enumerate(self.mem_access):
             enter = -1
@@ -53,6 +57,10 @@ class MemoryManager:
         return history
 
     def print_history(self,verbose=True):
+        """
+        Imprime por pantalla o devuelve (segun se establezca verbose) una tabla formateada con
+        la historia de la memoria
+        """
         history = self.frame_evolution()
         print_info = [[s[0], # Direccion virtual
                        bin(s[0]), # Direccion virtual en binario
@@ -78,22 +86,29 @@ class MemoryManager:
         else:
             return tabulate(print_info,headers="firstrow",tablefmt="fancy_grid")
 
+# A partir de aqui, definimos la herencia y sobreescribimos solo los metodos que necesitamos
+# para implementar los distintos algoritmos. Como minimo, cambiamos el fix_fail, y, si es necesario,
+# mas.
+
 class MemoryManagerBelady(MemoryManager):
     def __init__(self,mem_access:list[int]|list[str],ram_size:int,process_size:int,frame_size:int,
                  frame_state=None):
         super().__init__(mem_access, ram_size, process_size, frame_size, frame_state)
 
     def fix_fail(self,pag:int,index:int):
-        replace:int = -1
-        access_left = [self.vmem_locations[self.mem_access[i]][0] for i in range(index, len(self.mem_access))] # Los accesos que quedan
+        replace:int = -1 # El indice a reemplazar (empieza en -1, porque no puede llegar a ese valor)
+        # Los accesos que quedan en el futuro
+        access_left = [self.vmem_locations[self.mem_access[i]][0] for i in range(index, len(self.mem_access))]
         for i,candidate in enumerate(self.frame_state):
             if candidate not in access_left: # Si el candidato no se usa nunca mas, se cambia directamente
                 oldpage = candidate
                 self.frame_state[i] = pag
                 return oldpage
             elif replace == -1 or access_left.index(self.frame_state[replace]) < access_left.index(self.frame_state[i]):
+                # Se cambia si esta mas adelante en el futuro
                 replace = i
 
+        # Reemplazo y devolucion de la pagina vieja
         oldpage = self.frame_state[replace]
         self.frame_state[replace] = pag
         return oldpage
@@ -104,6 +119,7 @@ class MemoryManagerFIFO(MemoryManager):
         super().__init__(mem_access, ram_size, process_size, frame_size, frame_state)
 
     def fix_fail(self,pag:int,index:int):
+        # Se cambia la pagina, y aumenta el puntero, ez peasy
         oldpage = self.frame_state[self.pointer]
         self.frame_state[self.pointer] = pag
         self.pointer = (self.pointer + 1) % self.frame_num
@@ -115,8 +131,8 @@ class MemoryManagerLRU(MemoryManager):
         super().__init__(mem_access, ram_size, process_size, frame_size, frame_state)
 
     def fix_fail(self, pag: int, index: int):
-        replace: int = -1
-        access_left = [self.vmem_locations[self.mem_access[i]][0] for i in range(index)]  # Los accesos que quedan
+        replace: int = -1 # El puntero a reemplazar
+        access_left = [self.vmem_locations[self.mem_access[i]][0] for i in range(index)]  # Los accesos pasados
         access_left.reverse()
         for i, candidate in enumerate(self.frame_state):
             if candidate not in access_left:  # Si el candidato no se usa nunca mas, se cambia directamente
@@ -124,8 +140,10 @@ class MemoryManagerLRU(MemoryManager):
                 self.frame_state[i] = pag
                 return oldpage
             elif replace == -1 or access_left.index(self.frame_state[replace]) < access_left.index(self.frame_state[i]):
+                # Se cambia si esta mas atras en el pasado
                 replace = i
 
+        # Reemplazo y devolucion de la pagina vieja
         oldpage = self.frame_state[replace]
         self.frame_state[replace] = pag
         return oldpage
@@ -134,9 +152,11 @@ class MemoryManagerClock(MemoryManager):
     def __init__(self, mem_access: list[int] | list[str], ram_size: int, process_size: int, frame_size: int,
                  frame_state=None):
         super().__init__(mem_access, ram_size, process_size, frame_size, frame_state)
-        self.use_bit = [0]*self.frame_num
+        self.use_bit = [0]*self.frame_num # Lista de bits de uso, emparejada con self.frame_state
 
     def frame_evolution(self):
+        # Solo cambiamos esta implementacion para manejar el avance del puntero
+        # y la actualizacion del bit de uso al usarse
         history = []
         for i,mem in enumerate(self.mem_access):
             enter = -1
@@ -156,11 +176,11 @@ class MemoryManagerClock(MemoryManager):
         return history
 
     def fix_fail(self, pag: int, index: int):
-        while True:
-            if self.use_bit[self.pointer] == 1:
+        while True: # Continua hasta cambiar una pagina
+            if self.use_bit[self.pointer] == 1: # Bit de uso puesto, se cambia y avanza
                 self.use_bit[self.pointer] = 0
                 self.pointer = (self.pointer + 1) % self.frame_num
-            else:
+            else: # Bit de uso nulo, se reemplaza
                 oldpage = self.frame_state[self.pointer]
                 self.frame_state[self.pointer] = pag
                 self.use_bit[self.pointer] = 1
