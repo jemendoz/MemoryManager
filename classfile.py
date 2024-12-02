@@ -161,7 +161,9 @@ class MemoryManagerClock(MemoryManager):
                 self.use_bit[self.pointer] = 0
                 self.pointer = (self.pointer + 1) % self.frame_num
             else:
+                oldpage = self.frame_state[self.pointer]
                 self.frame_state[self.pointer] = pag
                 self.use_bit[self.pointer] = 1
                 self.pointer = (self.pointer + 1) % self.frame_num
                 break
+        return oldpage
