@@ -17,7 +17,6 @@ def error(msg:str):
     print(f"[!] ERROR: {msg}")
     input("Pulsa [Intro] para continuar...")
 
-
 def clear() -> None:
     if os.name == "nt":
         os.system("cls")
@@ -32,14 +31,16 @@ def save_to_file(data:str,name:str) -> None:
 
 def calc_alg(alg:str,data:list) -> None:
     mem_access, ram_size, process_size, frame_size, frame_state = data
+    mem_access_safe = copy(mem_access) # Versiones seguras de usar, que no cambian los valores del usuario
+    frame_state_safe = copy(frame_state)
     if alg == "belady":
-        memmngr = MemoryManagerBelady(mem_access, ram_size, process_size, frame_size, frame_state)
+        memmngr = MemoryManagerBelady(mem_access_safe, ram_size, process_size, frame_size, frame_state_safe)
     elif alg == "fifo":
-        memmngr = MemoryManagerFIFO(mem_access, ram_size, process_size, frame_size, frame_state)
+        memmngr = MemoryManagerFIFO(mem_access_safe, ram_size, process_size, frame_size, frame_state_safe)
     elif alg == "lru":
-        memmngr = MemoryManagerLRU(mem_access, ram_size, process_size, frame_size, frame_state)
+        memmngr = MemoryManagerLRU(mem_access_safe, ram_size, process_size, frame_size, frame_state_safe)
     elif alg == "clock":
-        memmngr = MemoryManagerClock(mem_access, ram_size, process_size, frame_size, frame_state)
+        memmngr = MemoryManagerClock(mem_access_safe, ram_size, process_size, frame_size, frame_state_safe)
     else:
         raise ValueError()
 
