@@ -129,3 +129,39 @@ class MemoryManagerLRU(MemoryManager):
         oldpage = self.frame_state[replace]
         self.frame_state[replace] = pag
         return oldpage
+
+class MemoryManagerClock(MemoryManager):
+    def __init__(self, mem_access: list[int] | list[str], ram_size: int, process_size: int, frame_size: int,
+                 frame_state=None):
+        super().__init__(mem_access, ram_size, process_size, frame_size, frame_state)
+        self.use_bit = [0]*self.frame_num
+
+    def frame_evolution(self):
+        history = []
+        for i,mem in enumerate(self.mem_access):
+            enter = -1
+            oldpage = -1
+            page = self.vmem_locations[mem][0]
+            if not page in self.frame_state:
+                enter = page
+                if len(self.frame_state) < self.frame_num:
+                    self.frame_state.append(page) # Cargado a demanda
+                    self.use_bit[self.pointer] = 1
+                    self.pointer = (self.pointer + 1) % self.frame_num
+                else:
+                    oldpage = self.fix_fail(page,i) # Remplazo
+            else:
+                self.use_bit[self.frame_state.index(page)] = 1
+            history.append([mem,copy(self.frame_state),enter,oldpage])
+        return history
+
+    def fix_fail(self, pag: int, index: int):
+        while True:
+            if self.use_bit[self.pointer] == 1:
+                self.use_bit[self.pointer] = 0
+                self.pointer = (self.pointer + 1) % self.frame_num
+            else:
+                self.frame_state[self.pointer] = pag
+                self.use_bit[self.pointer] = 1
+                self.pointer = (self.pointer + 1) % self.frame_num
+                break

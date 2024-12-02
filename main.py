@@ -2,14 +2,15 @@ from classfile import *
 from datetime import datetime as dt
 import os
 
-VERSION = "0.3.2"
+VERSION = "1.0.0"
 AUTHOR = "Jesús Mendoza"
 
 ALG_LIST = {
-    "1":["belady","fifo","lru"],
-    "2":["belady"],
-    "3":["fifo"],
-    "4":["lru"]
+    "2":["belady","fifo","lru","clock"],
+    "3":["belady"],
+    "4":["fifo"],
+    "5":["lru"],
+    "6":["clock"]
 }
 
 def error(msg:str):
@@ -37,6 +38,8 @@ def calc_alg(alg:str,data:list) -> None:
         memmngr = MemoryManagerFIFO(mem_access, ram_size, process_size, frame_size, frame_state)
     elif alg == "lru":
         memmngr = MemoryManagerLRU(mem_access, ram_size, process_size, frame_size, frame_state)
+    elif alg == "clock":
+        memmngr = MemoryManagerClock(mem_access, ram_size, process_size, frame_size, frame_state)
     else:
         raise ValueError()
 
@@ -59,17 +62,18 @@ def main() -> None:
         clear()
         print(f"Memory Manager v{VERSION}, by {AUTHOR}\n")
         print("Selecciona una opción:")
-        print("1. Calcular todos los algoritmos")
-        print("2. Calcular algoritmo de Belady")
-        print("3. Calcular algoritmo de FIFO")
-        print("4. Calcular algoritmo de LRU")
-        print("5. Establecer valores del sistema")
+        print("1. Establecer valores del sistema")
+        print("2. Calcular todos los algoritmos")
+        print("3. Calcular algoritmo de Belady")
+        print("4. Calcular algoritmo de FIFO")
+        print("5. Calcular algoritmo de LRU")
+        print("6. Calcular algoritmo de reloj")
         print("0. Salir")
 
         opc = input(" Opción: ")
         if opc == "0":
             break
-        elif opc == "5":
+        elif opc == "1":
             print("Secuencia de acceso a memoria (ej. 9D 0C 4F)")
             mem_access = input("Secuencia: ").strip().split(" ")
             for mem in mem_access:
@@ -105,6 +109,7 @@ def main() -> None:
 
             print("Estado inicial de memoria (ej. 0 1 5 4)")
             frame_state = input("Estado: ").strip().split(" ")
+            frame_state = frame_state if frame_state != [""] else []
             if len(frame_state) > (ram_size // frame_size):
                 error("tamano no valido del estado")
                 continue
@@ -118,7 +123,7 @@ def main() -> None:
                 continue
 
             setup = True
-        elif opc in ["1", "2", "3", "4"]:
+        elif opc in ["2", "3", "4", "5", "6"]:
             if not setup:
                 error("inicia los valores del sistema antes")
                 continue
@@ -127,7 +132,7 @@ def main() -> None:
             for alg in algs:
                 try:
                     calc_alg(alg,[mem_access, ram_size, process_size, frame_size, frame_state])
-                except ValueError:
+                except ValueError as e:
                     error("selección de algoritmo no válido")
             print("[+] HECHO!")
             input("Pulsa [Intro] para continuar...")

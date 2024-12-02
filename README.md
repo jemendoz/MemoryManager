@@ -23,5 +23,9 @@ Si este no funciona, prueba con
 python main.py
 ```
 
+Una vez hayas introducido los datos en el programa, y hayas generado las tablas
+que quieras, se guardan en la carpeta del programa con el nombre del algoritmo
+y la fecha actual.
+
 ## Licencia
 Este repositorio tiene licencia *MIT license*, para mas información, ver `LICENSE`
